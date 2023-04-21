@@ -19,8 +19,16 @@ def cli(action):
     elif action == 'save':
         save_data()
 
+
 def get_data():
-    pass
+    return _validate_file_path()
+
+
+def _validate_file_path():
+    expected_file_path = Path(PASS_URL)
+
+    return expected_file_path.is_file()
+
 
 def save_data():
     pass
