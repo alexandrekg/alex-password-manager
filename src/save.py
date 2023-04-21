@@ -1,6 +1,4 @@
-from pathlib import Path
-from conf import PASS_URL
-import json
+from conf import mongo_conn
 import click
 
 
@@ -9,13 +7,12 @@ import click
 @click.option('--account', help="Account from service")
 @click.option('--password', help="Password from service")
 def save(service, account, password):
-    data = {}
-    if service:
-        data[service] = {account: password}
-
-    data_to_save = json.dumps(data, indent=4)
-
-    with open(PASS_URL, "w") as pass_file:
-        print('Saving data on file.')
-        pass_file.write(data_to_save)
-        print('Done.')
+    conn = mongo_conn()
+    data = {
+        service: [
+            {'account': account, 'password': password}
+        ]
+    }
+    print('Inserting new data')
+    conn.insert_one(data)
+    print('Success!')
