@@ -1,2 +1,7 @@
-FILE_NAME = 'pass.json'
-PASS_URL = f"C:\\Users\\alexa\\Documents\\workspace\\alex-password-manager\\{FILE_NAME}"
+from pymongo import MongoClient
+from settings import MONGO_URI
+
+
+def mongo_conn():
+    client = MongoClient(MONGO_URI)
+    return client
