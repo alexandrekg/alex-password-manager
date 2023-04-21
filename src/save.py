@@ -9,12 +9,16 @@ import click
 @click.option('--account', help="Account from service")
 @click.option('--password', help="Password from service")
 def save(service, account, password):
-    print(f'Saving {account} / {password} on {service}')
-    # data = {}
-    # data_to_save = json.dumps(data, indent=4)
-    #
-    # with open(PASS_URL, "w") as pass_file:
-    #     pass_file.write(data_to_save)
+    data = {}
+    if service:
+        data[service] = {account: password}
+
+    data_to_save = json.dumps(data, indent=4)
+
+    with open(PASS_URL, "w") as pass_file:
+        print('Saving data on file.')
+        pass_file.write(data_to_save)
+        print('Done.')
 
 
 def _validate_file_path():
