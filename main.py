@@ -1,6 +1,7 @@
 import click
-from pathlib import Path
+import json
 
+from pathlib import Path
 from conf import PASS_URL
 
 
@@ -15,9 +16,11 @@ def run(service_name, account, password):
 @click.option('--action')
 def cli(action):
     if action == 'get':
-        get_data()
+        print('Get data')
+        # get_data()
     elif action == 'save':
-        save_data()
+        print('Save data')
+        # to_save_data()
 
 
 def get_data():
@@ -30,8 +33,15 @@ def _validate_file_path():
     return expected_file_path.is_file()
 
 
-def save_data():
-    pass
+def to_save_data():
+    if not _validate_file_path():
+        return "Can't acess file!"
+
+    data = {}
+    data_to_save = json.dumps(data, indent=4)
+
+    with open(PASS_URL, "w") as pass_file:
+        pass_file.write(data_to_save)
 
 
 if __name__ == "__main__":
