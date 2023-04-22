@@ -3,6 +3,7 @@ import click
 
 conn = mongo_conn()
 
+
 @click.command()
 @click.option('--service', help="Ex: Facebook, Steam, Instagram, etc.")
 @click.option('--account', help="Account from service")
