@@ -1,31 +1,41 @@
 import click
-from pathlib import Path
-from conf import PASS_URL
+from conf import mongo_conn
+import subprocess
 
 
 @click.command()
 @click.option('--service', default="", help="If you want to get a specific data")
-def retrieve(service):
-    if service:
-        print('Get specified data')
-    else:
-        data = _get_json_data()
-        print(data)
-
-
-def _get_json_data():
-    retrieved_data = []
-    if not _validate_file_path():
-        print("Can't acess requested data.")
+@click.option('--account', default="", help="Specify account you want to get password")
+def retrieve(service, account):
+    if not service:
+        print('Please specify a service.')
         return
 
-    with open(PASS_URL, "r") as data:
-        for d in data:
-            retrieved_data.append(d)
+    print('Retrieving data...')
+    data = get_data_from_mango(service)
+    print('Data retrieved')
+    if data:
+        if len(data) == 1:
+            return copy_pass(data[service][0]['password'])
 
-    return retrieved_data
+        if len(data) > 1 and not account:
+            print('Please specify an account to get password')
+            return
 
-def _validate_file_path():
-    expected_file_path = Path(PASS_URL)
+        return copy_pass(data[service])
 
-    return expected_file_path.is_file()
+
+def get_data_from_mango(service):
+    filter = {}
+
+    if service:
+        filter = {service: {'$exists': True}}
+
+    data = mongo_conn().find_one(filter, {'_id': 0})
+    return data
+
+
+def copy_pass(password):
+    password_cmd = f'echo {password.strip()}|clip'
+    print('Password copied')
+    return subprocess.check_call(password_cmd, shell=True)
