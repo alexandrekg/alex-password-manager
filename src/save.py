@@ -19,13 +19,13 @@ def save(service, account, password):
                     acc['password'] = password
         else:
             new_accounts.append({'account': account, 'password': password})
-        query_filter = {'service': service}
+        query_filter = {'service': str(service).lower()}
         query_set = {'$set': {'accounts': new_accounts}}
         conn.update_one(query_filter, query_set)
         print('Service updated')
     else:
         data = {
-            'service': service,
+            'service': str(service).lower(),
             'accounts': [
                 {'account': account, 'password': password}
             ]
@@ -37,6 +37,6 @@ def save(service, account, password):
 
 
 def check_if_service_exists_on_mongo(service):
-    query_filter = {'service': service}
+    query_filter = {'service': str(service).lower()}
     cursor = conn.find_one(query_filter)
     return cursor
