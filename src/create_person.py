@@ -10,7 +10,8 @@ conn = mongo_conn()
 def create_person(password):
     hashed_password = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt())
     person_dict = {
-        'master_password': hashed_password
+        'master_password': hashed_password,
+        'services': []
     }
     save(person_dict)
 
