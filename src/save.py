@@ -1,13 +1,30 @@
 from conf import mongo_conn
 import click
+import getpass
+import bcrypt
 
 conn = mongo_conn()
+
 
 @click.command()
 @click.option('--service', help="Ex: Facebook, Steam, Instagram, etc.")
 @click.option('--account', help="Account from service")
 @click.option('--password', help="Password from service")
 def save(service, account, password):
+    if not service:
+        print('Please specify a service.')
+        return
+
+    master_password = str(getpass.getpass('Your master password...  '))
+    if not master_password:
+        return
+
+    mongo_person = conn.find_one()
+
+    if not bcrypt.checkpw(master_password.encode('utf-8'), mongo_person['master_password']):
+        print('Passwords do not match or do not exists!')
+        return
+
     service_exists = check_if_service_exists_on_mongo(service)
     if service_exists:
         print('Updating service with new data')
